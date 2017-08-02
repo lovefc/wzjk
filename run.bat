@@ -9,6 +9,7 @@ call:is_num
 echo 开始执行任务 %jk_time%秒 监控一次
 set sh_file=%~dp0sh\restart.sh
 set wz_list=%~dp0wz.list
+set log_file=%~dp0log\%date:~0,4%%date:~5,2%%date:~8,2%.log
 call:win_is_64
 
 if "%BITS%"=="true"  (
@@ -21,6 +22,7 @@ start "" %~dp0exe\puttyAlertStopper.exe
 
 call:wzjt %wz_list% %jk_time%
 :wzjt
+if not exist %log_file% echo.>%log_file%
 setlocal enabledelayedexpansion  
 set /a v=0  
 for /f "delims=" %%i in (%1) do (
@@ -42,17 +44,20 @@ setlocal enabledelayedexpansion
 set /p str=<check.txt
 if "!str!"=="200" (
 call:get_ip %wzurl%
-echo %wzurl% 在%date% %time:~0,5%  正常访问 !wzip!
+set logstr=%wzurl% 在%date% %time:~0,5%  正常访问 !wzip!
+echo !logstr!
 if NOT EXIST %~dp0info\!wzip!.txt (
 echo open>%~dp0info\!wzip!.txt
 )
 ) else (
-echo %wzurl% 在%date% %time:~0,5% 无法正常访问
+set logstr=%wzurl% 在%date% %time:~0,5%  无法正常访问 
+echo !logstr!
+echo !logstr!>>%log_file%
 call:get_ip %wzurl%
 if EXIST %~dp0info\!wzip!.txt (
 echo %wzurl% 脚本执行中。。。。
 echo SSH信息:%~dp0info\!wzip!.txt
-call:pyrun %~dp0info\!wzip!.txt %sh_file% 0>nul 1>nul 2>nul
+call:pyrun %~dp0info\!wzip!.txt %sh_file% 0>nul 2>nul
 )
 )
 del check.txt /q  0>nul 1>nul 2>nul
@@ -77,10 +82,18 @@ if "!v!"=="4" (
 set UserPass=%%i
 )
 if "!v!"=="5" (
-set sh_file=%%i
+set sh_files=%%i
 )
 )
+
 setlocal disabledelayedexpansion
+if not defined sh_files (
+set sh_files=%2
+) else (
+if NOT EXIST %sh_files% (
+set sh_files=%~dp0sh\%sh_files%
+)
+)
 set "Server=%Server%" 
 set "Server=%Server: =%"
 set "Port=%Port%" 
@@ -89,7 +102,11 @@ set "UserName=%UserName%"
 set "UserName=%UserName: =%"
 set "UserPass=%UserPass%" 
 set "UserPass=%UserPass: =%"
-%~dp0exe\putty.exe -pw %UserPass% -P %Port% -m %2 %UserName%@%Server%
+if EXIST %sh_files% (
+%~dp0exe\putty.exe -pw %UserPass% -P %Port% -m %sh_files% %UserName%@%Server%
+) else (
+echo 执行sh脚本  %sh_files% 不存在！
+)
 gito:eof
 
 :win_is_64
