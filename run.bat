@@ -1,4 +1,4 @@
-::多网站监听 sh脚本执行器 --- by lovefc
+::多网站监听 sh脚本执行器 --- by lovefc 版权所有 未经本人许可 不得用于商业用途
 ::创建时间：2017/08/2
 ::github:https://github.com/lovefc/wzjk
 @echo off
