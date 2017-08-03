@@ -14,11 +14,13 @@ call:win_is_64
 
 if "%BITS%"=="true"  (
 set curl_path=%~dp0exe\64\curl.exe
+set puttystop=%~dp0exe\64\puttyAlertStopper.exe
 ) else (
 set curl_path=%~dp0exe\32\curl.exe
+set puttystop=%~dp0exe\32\puttyAlertStopper.exe
 )
 
-start "" %~dp0exe\puttyAlertStopper.exe
+start "" %puttystop%
 
 call:wzjt %wz_list% %jk_time%
 :wzjt
