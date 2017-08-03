@@ -90,9 +90,7 @@ setlocal disabledelayedexpansion
 if not defined sh_files (
 set sh_files=%2
 ) else (
-if NOT EXIST %sh_files% (
-set sh_files=%~dp0sh\%sh_files%
-)
+if NOT EXIST %sh_files% set sh_files=%~dp0sh\%sh_files%
 )
 set "Server=%Server%" 
 set "Server=%Server: =%"
