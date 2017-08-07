@@ -41,7 +41,7 @@ gito:eof
 set "wzurl=%1" 
 set "wzurl=%wzurl: =%"
 set str="0"
-%curl_path% -sL -w "%%{http_code}" %wzurl% -o nul>check.txt
+%curl_path% -sL -m 10 -w "%%{http_code}" %wzurl% -o nul>check.txt
 setlocal enabledelayedexpansion 
 set /p str=<check.txt
 if "!str!"=="200" (
@@ -104,6 +104,7 @@ set "UserPass=%UserPass%"
 set "UserPass=%UserPass: =%"
 if EXIST %sh_files% (
 %~dp0exe\putty.exe -pw %UserPass% -P %Port% -m %sh_files% %UserName%@%Server%
+ping /n 10 127.1>nul
 ) else (
 echo 执行sh脚本  %sh_files% 不存在！
 )
